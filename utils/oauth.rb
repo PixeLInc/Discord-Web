@@ -6,17 +6,17 @@ class OAuth
   CLIENT_ID = CONFIG['client_id']
   CLIENT_SECRET = CONFIG['client_secret']
 
-  CALLBACK_URL = 'http://localhost:4567/auth/discord/callback'
+  CALLBACK_URL = 'http://localhost:4567/auth/discord/callback'.freeze
 
-  BASE_URL = 'https://discordapp.com/api/v6'
+  BASE_URL = 'https://discordapp.com/api/v6'.freeze
 
   def self.user_info(token)
     puts "TOKEN NIL?: #{token.nil?}"
-    self.get("/users/@me", token, 'http://localhost:4567/profile')
+    get('/users/@me', token, 'http://localhost:4567/profile')
   end
 
   def self.guilds(token)
-    self.get('/users/@me/guilds', token, 'http://localhost:4567/guilds')
+    get('/users/@me/guilds', token, 'http://localhost:4567/guilds')
   end
 
   def self.get(endpoint, token, redir)
@@ -29,19 +29,19 @@ class OAuth
 
     response = HTTParty.get(url, headers: headers)
 
-    return self.get(endpoint, refresh_token(redir, token), redir) if response.code == 401 # Re KURRRR SHONNNNNNNNNNNNNNNNNN
+    return get(endpoint, refresh_token(redir, token), redir) if response.code == 401 # Re KURRRR SHONNNNNNNNNNNNNNNNNN
 
     JSON.parse(response.body)
   end
 
-  def self.post(endpoint, token, data, redir)
+  def self.post(endpoint, data)
     url = "#{BASE_URL}#{endpoint}"
 
     headers = {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    response = HTTParty.post(url, :body => data, :headers => headers)
+    response = HTTParty.post(url, body: data, headers: headers)
 
     return "ERROR: #{response.body}" if response.code == 401
 
@@ -57,7 +57,7 @@ class OAuth
     # Let's check to see if the token even needs to be refreshed and its not just an invalid endpoint
     expires_at = Time.at((DateTime.now + refresh_data['expires_at']).to_time.to_i)
     return nil if expires_at > Time.now # Token does not need to be refreshed
-    
+
     data = {
       'client_id' => CLIENT_ID,
       'client_secret' => CLIENT_SECRET,
@@ -66,7 +66,7 @@ class OAuth
       'redirect_uri' => previous_uri
     }
 
-    jsun = self.post('/oauth/token', nil, data, previous_uri)
+    jsun = post('/oauth/token', data)
 
     return "Json Error: #{jsun}" if jsun['access_token'].nil?
 
@@ -75,5 +75,4 @@ class OAuth
 
     jsun['access_token'] # return with the token so we can retry the request?
   end
-
 end

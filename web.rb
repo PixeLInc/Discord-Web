@@ -7,15 +7,12 @@ require 'sinatra/cookies'
 require 'securerandom'
 require 'json'
 
-
-use Rack::Session::Cookie, :key => 'rack.session',
-  :expire_after => 2592000,
-  :secret => OAuth::CONFIG['rake_secret']
+use Rack::Session::Cookie, key: 'rack.session', expire_after: 2592000, secret: OAuth::CONFIG['rake_secret']
 
 enable :sessions
 set :show_exceptions, false
 
-SCOPES = 'identify email guilds'
+SCOPES = 'identify email guilds'.freeze
 
 get '/' do
   redirect '/discord.html'
@@ -40,7 +37,7 @@ get '/auth/discord/callback' do # Callback
 
   raise "Error getting token from Discord: #{auth}" if auth.nil? || auth['access_token'].nil? || auth['refresh_token'].nil?
 
-  user_data = OAuth.user_info(auth['access_token']) 
+  user_data = OAuth.user_info(auth['access_token'])
 
   raise "Error getting user data from Discord: #{user_data}" if user_data.nil? || user_data['username'].nil?
 
@@ -60,23 +57,20 @@ get '/auth/discord/callback' do # Callback
 
   Database.add_token_or_update(uid, token, refresh, expiry)
 
-  #Expiry
+  # Expiry
   cookie_expires = Date.today
 
-  response.set_cookie('useruid', :value => uuid,
-    :domain => FALSE,
-    :path => '/',
-    :expires => (cookie_expires+30).to_time)
+  response.set_cookie('useruid', value: uuid, domain: FALSE, path: '/', expires: (cookie_expires + 30).to_time)
 
   redirect '/discord.html'
 end
 
 get '/auth/failure' do
-    "<pre>#{params[:message]}</pre>"
+  "<pre>#{params[:message]}</pre>"
 end
 
 get '/profile' do
-  return 403 if !registered?
+  return 403 unless registered?
 
   uid = Database.get_uid_from_uuid(request.cookies['useruid'])
   user_token = Database.get_token(uid)
@@ -89,7 +83,7 @@ get '/profile' do
 end
 
 get '/guilds' do
-  return 403 if !registered?
+  return 403 unless registered?
 
   uid = Database.get_uid_from_uuid(request.cookies['useruid'])
   user_token = Database.get_token(uid)
@@ -102,12 +96,12 @@ get '/guilds' do
 end
 
 get '/moaraccess' do
-  return 403 if !registered?
+  return 403 unless registered?
 
   uid = Database.get_uid_from_uuid(request.cookies['useruid'])
 
   # Get sgm member
-  return 403 if !is_sgm_member?(uid)
+  return 403 unless is_sgm_member?(uid)
 
   @smember = get_sgm_member(uid)
 
@@ -115,8 +109,8 @@ get '/moaraccess' do
 end
 
 get '/refresh' do
-  return 403 if !registered?
-  
+  return 403 unless registered?
+
   uid = Database.get_uid_from_uuid(request.cookies['useruid'])
   user_token = Database.get_token(uid)
 
@@ -136,35 +130,15 @@ end
 def registered? # Set permission level
   uid = request.cookies['useruid']
 
-  return false if uid == nil
+  return false unless uid
 
-  if session[:user_authed] == nil || session[:user_authed] == false then
-    session[:user_authed] = Database.valid_uuid?(uid)
-  end
+  session[:user_authed] = Database.valid_uuid?(uid) unless session[:user_authed] || session[:user_authed] == false
 
   session[:user_authed]
 end
 
-def authorized?(uid)
-  return false if !registered?
+def authorized?(_uid)
+  return false unless registered?
   # Do permission check here
   true
-end
-
-def is_sgm_member?(uid)
-  # SGM_USER_LIST.key? uid.to_i
-  false
-end
-
-def get_sgm_member(uid)
-  # SGM_USER_LIST[uid.to_i]
-  false
-end
-
-def role_to_level(role)
-  return 1 if role == 'mod'
-  return 2 if role == 'admin'
-  return 3 if role == 'lead'
-  return 4 if role == 'dev'
-  return 4 if role == 'owner'
 end
