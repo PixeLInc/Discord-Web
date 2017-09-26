@@ -1,8 +1,9 @@
 source 'https://rubygems.org'
 
-gem 'sinatra'
-gem 'mysql2'
-gem 'sinatra-contrib'
+gem 'haml'
 gem 'httparty'
 gem 'json'
+gem 'mysql2'
 gem 'rubocop'
+gem 'sinatra'
+gem 'sinatra-contrib'

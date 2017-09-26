@@ -1,12 +1,15 @@
-require_relative 'utils/oauth.rb'
-require './utils/database'
+require_relative 'models/oauth'
+require_relative 'models/database'
 
 require 'sinatra'
 require 'sinatra/cookies'
 
+require 'rack/protection'
+
 require 'securerandom'
 require 'json'
 
+use Rack::Protection # Provides basic needed protection against web attacks
 use Rack::Session::Cookie, key: 'rack.session', expire_after: 2592000, secret: OAuth::CONFIG['rake_secret']
 
 enable :sessions
@@ -48,14 +51,14 @@ get '/auth/discord/callback' do # Callback
 
   uuid = SecureRandom.uuid
 
-  Database.add_user_or_update(uid, username, discriminator, email, uuid)
+  Discord::Database.insert_user(uid, username, discriminator, email, uuid)
 
   # Token
   token = auth['access_token']
   refresh = auth['refresh_token']
   expiry = auth['expires_at']
 
-  Database.add_token_or_update(uid, token, refresh, expiry)
+  Discord::Database.insert_token(uid, token, refresh, expiry)
 
   # Expiry
   cookie_expires = Date.today
@@ -67,78 +70,4 @@ end
 
 get '/auth/failure' do
   "<pre>#{params[:message]}</pre>"
-end
-
-get '/profile' do
-  return 403 unless registered?
-
-  uid = Database.get_uid_from_uuid(request.cookies['useruid'])
-  user_token = Database.get_token(uid)
-
-  return 'Invalid Response' if user_token.nil?
-
-  @user_info = OAuth.user_info(user_token)
-
-  erb :profile
-end
-
-get '/guilds' do
-  return 403 unless registered?
-
-  uid = Database.get_uid_from_uuid(request.cookies['useruid'])
-  user_token = Database.get_token(uid)
-
-  return 'Invalid Response' if user_token.nil?
-
-  @guilds = OAuth.guilds(user_token)
-
-  erb :guilds
-end
-
-get '/moaraccess' do
-  return 403 unless registered?
-
-  uid = Database.get_uid_from_uuid(request.cookies['useruid'])
-
-  # Get sgm member
-  return 403 unless is_sgm_member?(uid)
-
-  @smember = get_sgm_member(uid)
-
-  erb :moarpls
-end
-
-get '/refresh' do
-  return 403 unless registered?
-
-  uid = Database.get_uid_from_uuid(request.cookies['useruid'])
-  user_token = Database.get_token(uid)
-
-  return 'Invalid Response' if user_token.nil?
-
-  return 'Unauthorized' if OAuth.refresh_token('/discord.html', user_token).nil?
-end
-
-not_found do
-  erb :not_found
-end
-
-error 403 do
-  erb :not_authorized
-end
-
-def registered? # Set permission level
-  uid = request.cookies['useruid']
-
-  return false unless uid
-
-  session[:user_authed] = Database.valid_uuid?(uid) unless session[:user_authed] || session[:user_authed] == false
-
-  session[:user_authed]
-end
-
-def authorized?(_uid)
-  return false unless registered?
-  # Do permission check here
-  true
 end
