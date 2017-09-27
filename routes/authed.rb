@@ -9,7 +9,26 @@ module Discord
     use Discord::Middleware::Login # Everything will be protected by auth
 
     get '/' do # It will go by '/user/*'
-      'You can only see this when authed.'
+      redirect '/user/profile'
+    end
+
+    get '/profile' do
+      @site_user = Discord::Cache.site_user(request.cookies['useruid'])
+
+      return 'Error getting site user: #PRF34' if @site_user.nil?
+
+      @user_info = Discord::Cache.user(@site_user.uid)
+
+      haml :profile
+    end
+
+    get '/refresh' do
+      return 403 if params[:uid].nil? || params[:uuid].nil? # lul
+
+      Discord::Cache.user(params[:uid], true)
+      Discord::Cache.site_user(params[:uuid], true)
+
+      redirect '/user/profile'
     end
   end
 
@@ -32,17 +51,11 @@ module Discord
         'redirect_uri' => OAuth::CALLBACK_URL
       }
 
-      puts "CALLBACK DATA: #{data}"
-
       auth = OAuth.post('/oauth2/token', data, false)
-
-      puts "AUTH: #{auth}"
 
       raise "Error getting token from Discord: #{auth}" if auth.nil? || auth['access_token'].nil? || auth['refresh_token'].nil?
 
       user_data = OAuth.user_info(auth['access_token'])
-
-      puts "USER_DATA: #{user_data}"
 
       raise "Error getting user data from Discord: #{user_data}" if user_data.nil? || user_data['username'].nil?
 

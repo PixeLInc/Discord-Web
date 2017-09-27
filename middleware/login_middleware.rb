@@ -3,13 +3,11 @@ module Discord
     # Provides a Login Middleware to make sure every request is authenticated.
     class Login < Discord::Middleware::BaseController
       def registered?
-        uid = request.cookies['useruid']
+        uuid = request.cookies['useruid']
 
-        return false unless uid
+        return false unless uuid
 
-        session[:user_authed] = false
-
-        # session[:user_authed] = Database::Database.valid_uuid?(uid) unless session[:user_authed]
+        session[:user_authed] = Discord::Database.valid_uuid?(uuid) unless session[:user_authed]
 
         session[:user_authed]
       end

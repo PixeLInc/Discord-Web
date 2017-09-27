@@ -8,9 +8,50 @@
           background: black;
           color: white;
       }
+
+      #box {
+        border-width: 0.25em;
+        border-style: solid;
+        border-color: blue;
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+      }
   %body
     %center
       %h1 Your Profile Stuff
-      - @user_info.each do |key, val|
-        = "#{key}: <font color='aqua'> #{val} </font>"
-        %br/
+      %a{:href => "/user/refresh?uid=#{@site_user.uid}&uuid=#{request.cookies['useruid']}"} Refresh Data
+      %h4 Last Refresh Time: #{@site_user.updated_at.nil? ? "Never" : @site_user.updated_at}
+      #box
+        %p 
+          Name: 
+          %font{:color => "aqua"}
+            = @user_info.name
+        %p
+          Discriminator:
+          %font{:color => "aqua"}
+            = @user_info.discriminator
+        %p
+          Email:
+          %font{:color => "aqua"}
+            = @user_info.email
+        %p
+          ID: 
+          %font{:color => "aqua"}
+            = @user_info.uid
+        %p 
+          Avatar Hash: 
+          %font{:color => "aqua"}
+            = @user_info.avatar
+        %p
+          Bot?: 
+          %font{:color => "aqua"}
+            = @user_info.bot
+        %p
+          MFA Enabled?: 
+          %font{:color => "aqua"}
+            = @user_info.mfa_enabled
+        %p
+          Verified?: 
+          %font{:color => "aqua"}
+            = @user_info.verified

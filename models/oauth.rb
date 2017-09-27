@@ -21,11 +21,11 @@ module Discord
     end
 
     def self.get(endpoint, token, bot = false)
-      return 'Unauthorized Token' if token.nil? && !bot
+      return "> Unauthorized Token | #{token} | #{bot}" if token.nil? && !bot
 
       url = "#{BASE_URL}#{endpoint}"
       headers = {
-        'Authorization': token
+        'Authorization': bot ? CONFIG['bot_token'] : "Bearer #{token}" # yea yea yea, I'll store it with 'Bearer' later.
       }
 
       response = HTTParty.get(url, headers: headers)

@@ -14,9 +14,15 @@ module Discord
       puts "Failed to retrieve cached user: #{uuid} | #{uid}"
 
       # TODO: Update cache with data
-      return DB.query("UPDATE `user_data` SET uuid='#{uuid}', name='#{name}', email='#{email}', created_at='#{Time.now}' where uid='#{uid}'") if user_exists?(uid) # UID should NEVAR change
+      return DB.query("UPDATE `user_data` SET uuid='#{uuid}', name='#{name}', email='#{email}', updated_at='#{Time.now}' where uid='#{uid}'") if user_exists?(uid) # UID should NEVAR change
 
       DB.query("INSERT IGNORE INTO `user_data` (uid, uuid, name, discriminator, email, created_at) VALUES ('#{uid}', '#{uuid}', '#{name}', '#{discrim}', '#{email}', '#{Time.now}');")
+    end
+
+    def self.update_user(uid, user_json)
+      return nil unless user_exists?(uid)
+
+      DB.query("UPDATE `user_data` SET name='#{user_json['username']}', email='#{user_json['email']}', updated_at='#{Time.now}' where uid='#{uid}'")
     end
 
     def self.insert_token(uid, token, refresh, exp)
@@ -68,7 +74,17 @@ module Discord
     end
 
     def self.get_user(uuid)
-      res = DB.query("SELECT uid, name, discriminator, email, created_at FROM `user_data` WHERE uuid='#{uuid}'")
+      res = DB.query("SELECT uid, name, discriminator, email, created_at, updated_at FROM `user_data` WHERE uuid='#{uuid}'")
+      res.first
+    end
+
+    def self.get_user_from_id(uid)
+      res = DB.query("SELECT uuid, name, discriminator, email, created_at, updated_at FROM `user_data` WHERE uid='#{uid}'")
+      res.first
+    end
+
+    def self.get_last_refresh(uid)
+      res = DB.query("SELECT updated_at FROM `user_data` WHERE uid='#{uid}'")
       res.first
     end
   end

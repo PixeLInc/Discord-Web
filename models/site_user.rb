@@ -9,11 +9,17 @@ module Discord
 
     attr_reader :uid
 
-    def initialize(name, discrim, email, uid)
+    attr_reader :created_at
+
+    attr_reader :updated_at
+
+    def initialize(name, discrim, email, uid, cat, uat)
       @name = name
       @discriminator = discrim
       @email = email
       @uid = uid
+      @created_at = cat
+      @updated_at = uat 
     end
   end
 end
