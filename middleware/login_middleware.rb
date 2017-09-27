@@ -1,17 +1,13 @@
 module Discord
   module Middleware
-    require 'sinatra/base'
-
     # Provides a Login Middleware to make sure every request is authenticated.
-    class Login < Sinatra::Base
-      enable :sessions
-
+    class Login < Discord::Middleware::BaseController
       def registered?
         uid = request.cookies['useruid']
 
         return false unless uid
 
-        session[:user_authed] = true
+        session[:user_authed] = false
 
         # session[:user_authed] = Database::Database.valid_uuid?(uid) unless session[:user_authed]
 
@@ -19,7 +15,7 @@ module Discord
       end
 
       before do # Check before any request using this
-        halt 403, 'Not authorized' unless registered?
+        halt 403 unless registered?
       end
     end
   end

@@ -8,23 +8,25 @@ module Discord
     CLIENT_ID = CONFIG['client_id']
     CLIENT_SECRET = CONFIG['client_secret']
 
-    CALLBACK_URL = 'http://localhost:4567/auth/discord/callback'.freeze
+    CALLBACK_URL = 'http://localhost:4567/discord/callback'.freeze
 
     BASE_URL = 'https://discordapp.com/api/v6'.freeze
 
     def self.user_info(token)
-      get('/users/@me', token, 'http://localhost:4567/profile')
+      get('/users/@me', token, false)
     end
 
     def self.guilds(token)
-      get('/users/@me/guilds', token, 'http://localhost:4567/guilds')
+      get('/users/@me/guilds', token, false)
     end
 
     def self.get(endpoint, token, bot = false)
       return 'Unauthorized Token' if token.nil? && !bot
 
       url = "#{BASE_URL}#{endpoint}"
-      headers['Authorization'] = bot ? CONFIG['bot_token'] : "Bearer #{token}"
+      headers = {
+        'Authorization': token
+      }
 
       response = HTTParty.get(url, headers: headers)
 

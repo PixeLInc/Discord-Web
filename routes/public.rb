@@ -1,12 +1,11 @@
 module Discord
   require 'sinatra/base'
-  require_relative '../middleware/error_handler_middleware.rb'
-  
-  # Protected user routes
-  class Public < Discord::Middleware::ErrorHandler
+  require_relative '../middleware/base_controller.rb'
 
+  # Protected user routes
+  class Public < Discord::Middleware::BaseController
     get '/' do
-      'Welcome to PixeLInc!'
+      redirect '/discord.html'
     end
   end
 end

@@ -1,0 +1,23 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title PixeLInc - Discord | Unauthorized
+    :css
+      html, body {
+          background: black;
+          color: red;
+      }
+  %body
+    %center
+      %h1
+        %small *cops in the distance*
+        YOU ARE NOT AUTHORIZED FOR THIS AREA!
+        %small *wee woo wee woo*
+      - if !registered?
+        %h4
+          %font{:color => "limegreen"}
+            Want to register at least? Go
+            %a{:href => "/discord.html"} here
+      %br/
+      %a{:href => "/discord.html"} Go Back

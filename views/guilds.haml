@@ -1,0 +1,16 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title PixeLInc - Discord | Guilds
+    :css
+      html, body {
+          background: black;
+          color: white;
+      }
+  %body
+    %center
+      %h1 Your Guilds Thingies
+      - @guilds.each do |guild|
+        = "#{guild['name']} | <font color='aqua'> #{guild['id']} </font> | Ar u ownar? <font color='red'> #{guild['owner']} </font>"
+        %br/

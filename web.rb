@@ -2,20 +2,12 @@ require_relative 'models/oauth'
 require_relative 'models/database'
 
 require 'sinatra'
-require 'sinatra/cookies'
-
-require 'rack/protection'
 
 require 'securerandom'
 require 'json'
 
-use Rack::Protection # Provides basic needed protection against web attacks
-use Rack::Session::Cookie, key: 'rack.session', expire_after: 2592000, secret: OAuth::CONFIG['rake_secret']
-
 enable :sessions
 set :show_exceptions, false
-
-SCOPES = 'identify email guilds'.freeze
 
 get '/' do
   redirect '/discord.html'

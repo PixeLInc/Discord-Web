@@ -2,13 +2,16 @@ module Discord
   # Provides access to the database
   module Database
     require 'mysql2'
+    require_relative 'cache'
 
     DB = Mysql2::Client.new(host: OAuth::CONFIG['database']['host'], username: OAuth::CONFIG['database']['username'], password: OAuth::CONFIG['database']['password'], database: OAuth::CONFIG['database']['db'])
 
     def self.insert_user(uid, name, discrim, email, uuid)
-      cached_user = Discord::Cache.site_user(uid)
+      cached_user = Discord::Cache.site_user(uuid)
 
       return cached_user if cached_user
+
+      puts "Failed to retrieve cached user: #{uuid} | #{uid}"
 
       # TODO: Update cache with data
       return DB.query("UPDATE `user_data` SET uuid='#{uuid}', name='#{name}', email='#{email}', created_at='#{Time.now}' where uid='#{uid}'") if user_exists?(uid) # UID should NEVAR change
@@ -51,7 +54,7 @@ module Discord
 
     def self.get_token(uid)
       res = DB.query("SELECT token FROM `token_data` WHERE uid='#{uid}'")
-      res.first['token']
+      res.first
     end
 
     def self.get_refresh_data_from_token(token)

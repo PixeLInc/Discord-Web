@@ -1,0 +1,16 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title PixeLInc - Discord | Profile
+    :css
+      html, body {
+          background: black;
+          color: white;
+      }
+  %body
+    %center
+      %h1 Your Profile Stuff
+      - @user_info.each do |key, val|
+        = "#{key}: <font color='aqua'> #{val} </font>"
+        %br/
