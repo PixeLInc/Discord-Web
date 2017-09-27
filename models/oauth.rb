@@ -20,6 +20,10 @@ module Discord
       get('/users/@me/guilds', token, false)
     end
 
+    def self.get_guild(guild_id)
+      get("/guilds/#{guild_id}", nil, true)
+    end
+
     def self.get(endpoint, token, bot = false)
       return "> Unauthorized Token | #{token} | #{bot}" if token.nil? && !bot
 

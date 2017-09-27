@@ -22,6 +22,30 @@ module Discord
       haml :profile
     end
 
+    get '/guilds' do
+      @site_user = Discord::Cache.site_user(request.cookies['useruid'])
+
+      return 'Error getting site user: #PRF34' if @site_user.nil?
+
+      user_token = Discord::Cache.token(@site_user.uid)
+
+      return 'Error getting auth' if user_token.nil?
+
+      @guilds = OAuth.guilds(user_token.token) # Who needs caching? Am I right, or am I right?
+
+      haml :guilds
+    end
+
+    get '/guilds/:id' do
+      return 'Guild ID not set' if params[:id].nil?
+
+      @guild = Discord::Cache.guild(params[:id])
+
+      puts @guild.icon_url
+
+      haml :guild
+    end
+
     get '/refresh' do
       return 403 if params[:uid].nil? || params[:uuid].nil? # lul
 

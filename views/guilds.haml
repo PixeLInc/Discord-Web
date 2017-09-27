@@ -12,5 +12,5 @@
     %center
       %h1 Your Guilds Thingies
       - @guilds.each do |guild|
-        = "#{guild['name']} | <font color='aqua'> #{guild['id']} </font> | Ar u ownar? <font color='red'> #{guild['owner']} </font>"
+        = "#{guild['name']} | <a href='/user/guilds/#{guild['id']}'> <font color='aqua'> #{guild['id']} </font> </a> | Ar u ownar? <font color='red'> #{guild['owner']} </font>"
         %br/

@@ -4,6 +4,7 @@ module Discord
     extend self
 
     require_relative 'discord_user'
+    require_relative 'discord_guild'
     require_relative 'site_user'
     require_relative 'token'
 
@@ -52,7 +53,19 @@ module Discord
       @site_users[uuid] = user
     end
 
-    def guild(id) end
+    def guild(id, force = false)
+      return @guilds[id] if @guilds[id] && !force
+
+      puts "Resolving uncached guild '#{id}...'"
+
+      guild_json = OAuth.get_guild(id)
+
+      return nil if guild_json.nil?
+
+      guild = DiscordGuild.new(guild_json['id'], guild_json['name'], guild_json['icon'], guild_json['owner_id'], guild_json['roles'], guild_json['emojis'], guild_json['unavailable'], guild_json['member_count'], guild_json['members'], guild_json['channels'])
+
+      @guilds[id] = guild
+    end
 
     def channel(id) end
 

@@ -1,0 +1,32 @@
+!!!
+%html
+  %head
+    %title
+      PixeLInc - #{@guild.name}
+    :css
+      html, body {
+        text-align: center;
+        background-color: black;
+        color: white;
+      }
+
+      #box {
+        border: 2px solid lime;
+        width: 50em;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      #right {
+        text-align: right;
+      }
+  %body
+    %h1 Information about #{@guild.name}
+    %h4 #{@guild.id}
+    #box
+      %img#right{:src => @guild.icon_url}
+      %p
+        Owner ID: #{@guild.owner_id}
+      %p
+        Roles: #{ @guild.roles.sort_by{ |role| -role['position'] }.map { |role| role['name'] }.join(', ') }
+
