@@ -20,7 +20,7 @@ module Discord
       get('/users/@me/guilds', token, false)
     end
 
-    def self.get_guild(guild_id)
+    def self.get_guild(token, guild_id)
       get("/guilds/#{guild_id}", nil, true)
     end
 

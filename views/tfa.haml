@@ -1,0 +1,32 @@
+!!!
+%html
+  %head
+    %title
+      Two Factor Authentication
+    :css
+      html, body {
+        text-align: center;
+        background-color: black;
+        color: white;
+
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .but {
+        text-decoration: none;
+        color: aqua;
+        padding: 10px;
+        background: none;
+        cursor: pointer;
+
+        border: 1px solid gray;
+      }
+
+  %body
+    %h2 Please enter your 2FA Code from your Authenticator app
+    %form{:action => '/user/verify', :method => 'post'}
+      %input{:type => 'text', :id => 'code', :name => 'code', :required => true}
+      %br
+      %br
+      %input{:type => 'submit', :value => 'Send to the Gods!', :class => 'but'}

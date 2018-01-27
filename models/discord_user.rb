@@ -17,7 +17,9 @@ module Discord
 
     attr_reader :verified
 
-    def initialize(name, discrim, email, uid, avatar, bot, mfa, verified)
+    attr_accessor :guild_ids
+
+    def initialize(name, discrim, email, uid, avatar, bot, mfa, verified, guilds = [])
       @name = name
       @discriminator = discrim
       @email = email
@@ -26,6 +28,7 @@ module Discord
       @bot = bot
       @mfa_enabled = mfa
       @verified = verified
+      @guild_ids = guilds
     end
   end
 end

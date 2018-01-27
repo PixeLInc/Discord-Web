@@ -13,13 +13,16 @@ module Discord
 
     attr_reader :updated_at
 
-    def initialize(name, discrim, email, uid, cat, uat)
+    attr_reader :mfa_enabled
+
+    def initialize(name, discrim, email, uid, cat, uat, mfa)
       @name = name
       @discriminator = discrim
       @email = email
       @uid = uid
       @created_at = cat
-      @updated_at = uat 
+      @updated_at = uat
+      @mfa_enabled = mfa
     end
   end
 end

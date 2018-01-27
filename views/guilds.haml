@@ -5,12 +5,23 @@
     %title PixeLInc - Discord | Guilds
     :css
       html, body {
-          background: black;
+        background: black;
           color: white;
+      }
+
+      #guild {
+        padding: 0;
+        margin-bottom: 10px;
+
+        font-size: 20px;
       }
   %body
     %center
-      %h1 Your Guilds Thingies
+      %h1 Your Guilds
+      %h5
+        Note: It will only show the servers you have the
+        %font{color: 'red'} ADMINISTRATOR or MANAGE_SERVER
+        permission in.
+
       - @guilds.each do |guild|
-        = "#{guild['name']} | <a href='/user/guilds/#{guild['id']}'> <font color='aqua'> #{guild['id']} </font> </a> | Ar u ownar? <font color='red'> #{guild['owner']} </font>"
-        %br/
+        = "<div id='guild'> #{guild['name']} | <a href='/user/guilds/#{guild['id']}'> <font color='aqua'> #{guild['id']} </font> </a> </div>"

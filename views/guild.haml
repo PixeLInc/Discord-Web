@@ -2,7 +2,7 @@
 %html
   %head
     %title
-      PixeLInc - #{@guild.name}
+      PixeLInc - #{@guild == 50001 ? "Error" : @guild.name}
     :css
       html, body {
         text-align: center;
@@ -15,18 +15,22 @@
         width: 50em;
         margin-left: auto;
         margin-right: auto;
+        padding: 1.2em;
       }
 
       #right {
         text-align: right;
       }
   %body
-    %h1 Information about #{@guild.name}
-    %h4 #{@guild.id}
-    #box
-      %img#right{:src => @guild.icon_url}
-      %p
-        Owner ID: #{@guild.owner_id}
-      %p
-        Roles: #{ @guild.roles.sort_by{ |role| -role['position'] }.map { |role| role['name'] }.join(', ') }
+    - if @guild == 50001
+      %h1 Sorry, I'm not in that guild!
+    - else
+      %h1 Information about #{@guild.name}
+      %h4 #{@guild.id}
+      #box
+        %img#right{:src => @guild.icon_url}
+        %p
+          Owner ID: #{@guild.owner_id}
+        %p
+          Roles: #{ @guild.roles.sort_by{ |role| -role['position'] }.map { |role| role['name'] }.join(', ') }
 

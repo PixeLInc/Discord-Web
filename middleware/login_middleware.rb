@@ -2,6 +2,7 @@ module Discord
   module Middleware
     # Provides a Login Middleware to make sure every request is authenticated.
     class Login < Discord::Middleware::BaseController
+
       def registered?
         uuid = request.cookies['useruid']
 

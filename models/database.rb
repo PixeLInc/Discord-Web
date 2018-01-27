@@ -74,7 +74,7 @@ module Discord
     end
 
     def self.get_user(uuid)
-      res = DB.query("SELECT uid, name, discriminator, email, created_at, updated_at FROM `user_data` WHERE uuid='#{uuid}'")
+      res = DB.query("SELECT uid, name, discriminator, email, created_at, updated_at, mfa_enabled FROM `user_data` WHERE uuid='#{uuid}'")
       res.first
     end
 
@@ -85,6 +85,12 @@ module Discord
 
     def self.get_last_refresh(uid)
       res = DB.query("SELECT updated_at FROM `user_data` WHERE uid='#{uid}'")
+      res.first
+    end
+
+    # 2FA DB Stuff
+    def self.get_2fa_data(uuid)
+      res = DB.query("SELECT secret, last_otp_at FROM `2fa_data` WHERE uuid='#{uuid}'")
       res.first
     end
   end
